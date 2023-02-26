@@ -11,5 +11,5 @@ pub fn tokenize(input: &str) -> Vec<&str> {
     let res = punct_non_digit.replace_all(input, "$1 $2 ");
     res =non_digit_punct.replace_all(res.as_ref(), " $1 $2");
     res = symbols.replace_all(res.as_ref(), " $1 ");
-    res.as_ref().split_whitespace()
+    res.as_ref().split_whitespace().collect()
 }

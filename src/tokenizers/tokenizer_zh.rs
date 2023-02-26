@@ -1,6 +1,4 @@
-use tokenizer_re::tokenize;
-
-const UCODE_RANGES: [(char, char)] = [
+const UCODE_RANGES: [(char, char); 22] = [
     ('\u{3400}', '\u{4db5}'), // CJK Unified Ideographs Extension A, release 3.0
     ('\u{4e00}', '\u{9fa5}'), // CJK Unified Ideographs, release 1.1
     ('\u{9fa6}', '\u{9fbb}'), // CJK Unified Ideographs, release 4.1
@@ -27,24 +25,22 @@ const UCODE_RANGES: [(char, char)] = [
 ];
 
 fn is_chinese_char(uchar: &char) -> bool {
-    UCODE_RANGES.iter().any(|range| {
-        if let (start, end) = range {
-            start <= uchar && uchar <= end
-        }
-    })
+    UCODE_RANGES
+        .iter()
+        .any(|range| &range.0 <= uchar && uchar <= &range.1)
 }
 
-fn tokenize(input: str) -> Vec<&str> {
-    input = input.trim();
+fn tokenize(input: String) -> Vec<String> {
     let res = input
+        .trim()
         .chars()
-        .flat_map(|&c| {
-            if is_chinese_char(c) {
-                [' ', c, ' ']
+        .flat_map(|c| {
+            if is_chinese_char(&c) {
+                vec![' ', c, ' ']
             } else {
-                [c]
+                vec![c]
             }
         })
-        .collect::<str>();
-    tokenizer_re::tokenize(res)
+        .collect::<String>();
+    super::tokenizer_re::tokenize(res)
 }
