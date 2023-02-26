@@ -1,17 +1,19 @@
+use std::borrow::Borrow;
+
 use lazy_static::lazy_static;
 use regex::Regex;
 
-pub fn tokenize(input: String) -> Vec<String> {
+pub fn tokenize(input: &str) -> Vec<String> {
     lazy_static! {
-        static ref western: Regex = Regex::new(r"([\{-\~\[-\` -\&\(-\+\:-\@\/])").unwrap();
-        static ref digit_period_comma: Regex = Regex::new(r"([^0-9])([\.,])").unwrap();
-        static ref period_comma_digit: Regex = Regex::new(r"([\.,])([^0-9]").unwrap();
-        static ref digit_dash: Regex = Regex::new(r"([0-9])(-)").unwrap();
+        static ref WESTERN: Regex = Regex::new(r"([\{-\~\[-\` -\&\(-\+\:-\@\/])").unwrap();
+        static ref DIGIT_PERIOD_COMMA: Regex = Regex::new(r"([^0-9])([\.,])").unwrap();
+        static ref PERIOD_COMMA_DIGIT: Regex = Regex::new(r"([\.,])([^0-9]").unwrap();
+        static ref DIGIT_DASH: Regex = Regex::new(r"([0-9])(-)").unwrap();
     }
     // TODO: maybe this could be made faster using `regex::Regex.split`?
-    let res = western.replace_all(input.as_str(), "$1 ");
-    res = digit_period_comma.replace_all(res.as_ref(), "$1 $2 ");
-    res = period_comma_digit.replace_all(res.as_ref(), " $1 $2");
-    res = digit_dash.replace_all(res.as_ref(), "$1 $2 ");
-    res.split_whitespace().map(|s| s.to_owned()).collect()
+    let mut res = WESTERN.replace_all(&input, "$1 ").into_owned();
+    res = DIGIT_PERIOD_COMMA.replace_all(res.as_ref(), "$1 $2 ").into_owned();
+    res = PERIOD_COMMA_DIGIT.replace_all(res.as_ref(), " $1 $2").into_owned();
+    res = DIGIT_DASH.replace_all(res.as_ref(), "$1 $2 ").into_owned();
+    res.split_whitespace().map(|x| {x.to_owned()}).collect()
 }

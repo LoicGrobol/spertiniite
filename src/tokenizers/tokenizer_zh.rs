@@ -30,7 +30,7 @@ fn is_chinese_char(uchar: &char) -> bool {
         .any(|range| &range.0 <= uchar && uchar <= &range.1)
 }
 
-fn tokenize(input: String) -> Vec<String> {
+fn tokenize(input: &str) -> Vec<String> {
     let res = input
         .trim()
         .chars()
@@ -42,5 +42,6 @@ fn tokenize(input: String) -> Vec<String> {
             }
         })
         .collect::<String>();
-    super::tokenizer_re::tokenize(res)
+
+    super::tokenizer_re::tokenize(&res)
 }

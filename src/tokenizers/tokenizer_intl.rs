@@ -1,15 +1,15 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 
-pub fn tokenize(input: &str) -> Vec<&str> {
+pub fn tokenize(input: &str) -> Vec<String> {
     lazy_static! {
-        static ref punct_non_digit: Regex = Regex::new(r"(\P{N})(\p{P})").unwrap();
-        static ref non_digit_punct : Regex = Regex::new(r"(\P{N})(\p{P})").unwrap();
-        static ref symbols : Regex = Regex::new(r"(\P{S})").unwrap();
+        static ref PUNCT_NON_DIGIT: Regex = Regex::new(r"(\P{N})(\p{P})").unwrap();
+        static ref NON_DIGIT_PUNCT: Regex = Regex::new(r"(\P{N})(\p{P})").unwrap();
+        static ref SYMBOLS: Regex = Regex::new(r"(\P{S})").unwrap();
     }
     // TODO: maybe this could be made faster using `regex::Regex.split`?
-    let res = punct_non_digit.replace_all(input, "$1 $2 ");
-    res =non_digit_punct.replace_all(res.as_ref(), " $1 $2");
-    res = symbols.replace_all(res.as_ref(), " $1 ");
-    res.as_ref().split_whitespace().collect()
+    let mut res = PUNCT_NON_DIGIT.replace_all(input, "$1 $2 ").into_owned();
+    res = NON_DIGIT_PUNCT.replace_all(res.as_ref(), " $1 $2").into_owned();
+    res = SYMBOLS.replace_all(res.as_ref(), " $1 ").into_owned();
+    res.split_whitespace().map(|x| {x.to_owned()}).collect()
 }
